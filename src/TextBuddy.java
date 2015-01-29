@@ -13,7 +13,9 @@ public class TextBuddy {
 	private static final String MESSAGE_WELCOME ="Welcome to TextBuddy. %1$s is ready for use.";
 	private static final String MESSAGE_NOFILE ="Since no input file has been specified,one has been created for you";
 	private static final String MESSAGE_DELETE ="Deleted %1$s from %2$s";
-
+	private static final String MESSAGE_GOODBYE = "Goodbye";
+	private static final String MESSAGE_ADDLINE = "added to %1$s : %2$s";
+	private static final String MESSAGE_CLEAR = "all content deleted from %1$s";
 	/**
 	 * Main function,requires a file name to be specified as its params.
 	 * @param args
@@ -43,7 +45,7 @@ public class TextBuddy {
 		String command = Commands[0].toLowerCase();
 		if(command.equals("exit")){
 			stopRunning();
-			displayMessage("Goodbye");
+			displayMessage(MESSAGE_GOODBYE);
 			System.exit(0);
 		}
 		if(command.equals("add")){
@@ -82,7 +84,7 @@ public class TextBuddy {
 	/**
 	 * Opens the file to be edited,a new file "textbuddy.txt" will be created if no file specified.
 	 * @param args
-	 * @return
+	 * @return file
 	 * @throws IOException
 	 */
 	private static File toBeEdited(String[] args) throws IOException {
@@ -99,7 +101,7 @@ public class TextBuddy {
 	/**
 	 * Checks if user has entered a file name
 	 * @param args
-	 * @return
+	 * @return boolean
 	 */
 	private static boolean hasInput(String[] args) {
 		return args[0]!=null;
@@ -107,7 +109,7 @@ public class TextBuddy {
 	/**
 	 * Gets the next Command from the user for parsing
 	 * @param sc
-	 * @return
+	 * @return String[]
 	 */
 	private static String[] getCommand(Scanner sc) {
 		displayCommand();
@@ -131,7 +133,7 @@ public class TextBuddy {
 	/**
 	 * Attempts to access the file and return a file object
 	 * @param args
-	 * @return
+	 * @return File
 	 * @throws IOException
 	 */
 	private static File accessFile(String args) throws IOException {
@@ -162,7 +164,7 @@ public class TextBuddy {
 		reader = createReader(file);
 		addALine(toBeAdded);
 		
-		System.out.println("added to "+ fileName+": \""+toBeAdded+"\"");
+		displayMessage(String.format(MESSAGE_ADDLINE, fileName,toBeAdded));
 		closeStreams(writer, reader);
 	}
 	/**
@@ -181,7 +183,7 @@ public class TextBuddy {
 	/**
 	 * Create a BufferedWriter from given file.
 	 * @param file
-	 * @return
+	 * @return BufferedWriter
 	 * @throws IOException
 	 */
 	private static BufferedWriter createWriter(File file) throws IOException {
@@ -259,7 +261,7 @@ public class TextBuddy {
 		BufferedWriter writer = createWriter(file);
 		onCompletedDelete(file,newFile);
 		closeStreams(writer, null);
-		displayMessage("all content deleted from "+file.getName());
+		displayMessage(String.format(MESSAGE_CLEAR, file.getName()));
 	}
 	/**
 	 * Displays all lines currently in the file
@@ -288,7 +290,7 @@ public class TextBuddy {
 	/**
 	 * Prints all other lines,used as a helper method for displayAll();
 	 * @param currentLine
-	 * @return
+	 * @return String
 	 * @throws IOException
 	 */
 	private static String printAllOtherLines(String currentLine)
@@ -300,7 +302,7 @@ public class TextBuddy {
 	/**
 	 * Creates a bufferedReader from the input file.
 	 * @param file
-	 * @return
+	 * @return BufferedReader
 	 * @throws FileNotFoundException
 	 */
 	private static BufferedReader createReader(File file)
@@ -310,7 +312,7 @@ public class TextBuddy {
 	/**
 	 * Gets next line from the current reader.
 	 * @param reader
-	 * @return
+	 * @return String
 	 * @throws IOException
 	 */
 	private static String getNextLine(BufferedReader reader) throws IOException {
@@ -319,7 +321,7 @@ public class TextBuddy {
 	/**
 	 * Checks if the current line returned by the reader is empty.
 	 * @param currentLine
-	 * @return
+	 * @return boolean
 	 */
 	private static boolean isEmpty(String currentLine) {
 		return currentLine==null;
@@ -369,7 +371,7 @@ public class TextBuddy {
 	}
 	/**
 	 * Creates a temp file to be used for DeleteLine();
-	 * @return
+	 * @return File
 	 */
 	private static File createTempFile() {
 		File newFile = new File("temp.txt");
