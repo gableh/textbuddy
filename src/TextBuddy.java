@@ -12,10 +12,11 @@ public class TextBuddy {
 	private static final String MESSAGE_ISEMPTY ="%1$s is empty.";
 	private static final String MESSAGE_WELCOME ="Welcome to TextBuddy. %1$s is ready for use.";
 	private static final String MESSAGE_NOFILE ="Since no input file has been specified,one has been created for you";
-	private static final String MESSAGE_DELETE ="Deleted %1$s from %2$s";
+	private static final String MESSAGE_DELETE ="Deleted %2$s from %1$s";
 	private static final String MESSAGE_GOODBYE = "Goodbye";
 	private static final String MESSAGE_ADDLINE = "added to %1$s : %2$s";
 	private static final String MESSAGE_CLEAR = "all content deleted from %1$s";
+	private static final String MESSAGE_DEFAULT = "No input file specified,using default textbuddy.txt file.";
 	/**
 	 * Main function,requires a file name to be specified as its params.
 	 * @param args
@@ -88,13 +89,20 @@ public class TextBuddy {
 	 * @throws IOException
 	 */
 	private static File toBeEdited(String[] args) throws IOException {
+		File file;
 		if(!hasInput(args)){
 			txtFile = "textbuddy.txt";
-			displayMessage(MESSAGE_NOFILE);
+			file = accessFile(txtFile);
+			if(file.exists()){
+				displayMessage(MESSAGE_DEFAULT);
+			}else{
+				displayMessage(MESSAGE_NOFILE);
+			}
 		}else{
 			txtFile = args[0];
 		}
-		File file = accessFile(txtFile);
+		file = accessFile(txtFile);
+
 		displayMessage(String.format(MESSAGE_WELCOME,txtFile));
 		return file;
 	}
@@ -104,7 +112,7 @@ public class TextBuddy {
 	 * @return boolean
 	 */
 	private static boolean hasInput(String[] args) {
-		return args[0]!=null;
+		return args.length!=0;
 	}
 	/**
 	 * Gets the next Command from the user for parsing
@@ -258,9 +266,7 @@ public class TextBuddy {
 	 */
 	private static void clearAll(File file)throws IOException{
 		File newFile = createTempFile();
-		BufferedWriter writer = createWriter(file);
 		onCompletedDelete(file,newFile);
-		closeStreams(writer, null);
 		displayMessage(String.format(MESSAGE_CLEAR, file.getName()));
 	}
 	/**
